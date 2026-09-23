@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Harvester — Adzuna Collector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #ECEEE7;
+    --paper: #F5F6F0;
+    --ink: #202B24;
+    --ink-soft: #55604F;
+    --line: #C7CDBE;
+    --accent: #2F5D4F;
+    --accent-soft: #E4EBE4;
+    --warm: #9C5B2E;
+    --warm-soft: #F1E4D6;
+    --danger: #8B3A3A;
+    --danger-soft: #F3E2E0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:48px 24px 96px;}
+
+  header{margin-bottom:40px;}
+  .kicker{color:var(--ink-soft);font-size:14px;margin:0 0 6px;}
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:34px;
+    margin:0 0 20px;
+    letter-spacing:-0.01em;
+  }
+  .tally{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:18px 0;
+  }
+  .tally-num{
+    font-family:'Fraunces', serif;
+    font-variant-numeric: tabular-nums;
+    font-size:48px;
+    font-weight:600;
+    line-height:1;
+  }
+  .tally-label{color:var(--ink-soft);font-size:15px;}
+
+  section{margin-bottom:32px;}
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:19px;
+    margin:0 0 14px;
+  }
+
+  .panel{
+    background:var(--paper);
+    border:1px solid var(--line);
+    padding:22px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field.full{grid-column:1 / -1;}
+  label{font-size:13px;color:var(--ink-soft);}
+  input, select{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:15px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+  }
+  input:focus, select:focus, button:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+
+  .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  button{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    padding:10px 16px;
+    border:1px solid var(--accent);
+    background:var(--accent);
+    color:#fff;
+    cursor:pointer;
+  }
+  button:hover{background:#254c40;}
+  button:disabled{opacity:0.5;cursor:default;}
+  button.secondary{
+    background:transparent;
+    color:var(--ink);
+    border:1px solid var(--line);
+  }
+  button.secondary:hover{border-color:var(--ink-soft);}
+
+  .status{
+    margin-top:16px;
+    font-size:14px;
+    color:var(--ink-soft);
+    min-height:20px;
+  }
+  .status.error{color:var(--danger);}
+  .banner{
+    padding:12px 14px;
+    background:var(--danger-soft);
+    border:1px solid var(--danger);
+    color:var(--danger);
+    font-size:14px;
+    margin-top:14px;
+    display:none;
+  }
+  .banner.show{display:block;}
+
+  .results-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .results-head input{flex:1;min-width:180px;}
+  .results-tools{display:flex;gap:8px;}
+
+  .row{
+    display:flex;
+    gap:16px;
+    padding:16px 0;
+    border-bottom:1px solid var(--line);
+    align-items:flex-start;
+  }
+  .row.new{border-left:3px solid var(--warm);padding-left:13px;}
+  .row-main{flex:1;min-width:0;}
+  .row-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:17px;
+    margin:0 0 4px;
+  }
+  .row-title a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);}
+  .row-title a:hover{border-color:var(--ink);}
+  .row-meta{font-size:14px;color:var(--ink-soft);}
+  .tag{
+    font-size:11px;
+    color:var(--warm);
+    background:var(--warm-soft);
+    border:1px solid var(--warm);
+    padding:2px 6px;
+    white-space:nowrap;
+    align-self:flex-start;
+  }
+  .empty{color:var(--ink-soft);font-size:14px;padding:20px 0;}
+
+  .file-input-wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .profile-summary{font-size:14px;}
+  .profile-summary p{margin:0 0 8px;}
+  .chip-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{
+    font-size:12px;
+    background:var(--accent-soft);
+    border:1px solid var(--accent);
+    color:var(--accent);
+    padding:2px 8px;
+  }
+  .score-badge{
+    font-family:'Fraunces', serif;
+    font-variant-numeric: tabular-nums;
+    font-weight:600;
+    font-size:14px;
+    padding:4px 10px;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    white-space:nowrap;
+    align-self:flex-start;
+  }
+  .score-badge.mid{border-color:var(--warm);color:var(--warm);}
+  .score-badge.low{border-color:var(--ink-soft);color:var(--ink-soft);}
+  .reasons{font-size:12px;color:var(--ink-soft);margin:6px 0 0;}
+  .row.excluded{opacity:0.5;}
+
+  footer{margin-top:48px;font-size:12px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="kicker">Adzuna collector · runs locally in your browser</p>
+    <h1>Job Harvester</h1>
+    <div class="tally">
+      <span class="tally-num" id="tallyNum">0</span>
+      <span class="tally-label">jobs collected so far</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Search parameters</h2>
+    <div class="panel">
+      <div class="grid">
+        <div class="field">
+          <label for="appId">App ID</label>
+          <input id="appId" type="text" placeholder="your Adzuna app_id">
+        </div>
+        <div class="field">
+          <label for="appKey">App Key</label>
+          <input id="appKey" type="password" placeholder="your Adzuna app_key">
+        </div>
+        <div class="field">
+          <label for="keywords">Keywords</label>
+          <input id="keywords" type="text" placeholder="e.g. python developer">
+        </div>
+        <div class="field">
+          <label for="location">Location</label>
+          <input id="location" type="text" placeholder="e.g. new york">
+        </div>
+        <div class="field">
+          <label for="country">Country</label>
+          <select id="country">
+            <option value="us">United States</option>
+            <option value="gb">United Kingdom</option>
+            <option value="ca">Canada</option>
+            <option value="au">Australia</option>
+            <option value="de">Germany</option>
+            <option value="fr">France</option>
+            <option value="in">India</option>
+            <option value="nl">Netherlands</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="maxPages">Pages to fetch</label>
+          <input id="maxPages" type="number" min="1" max="10" value="3">
+        </div>
+        <div class="field full">
+          <p class="hint">App ID and App Key are stored only in this browser (localStorage) and sent directly to Adzuna — never anywhere else. Each page is 50 results and one API call; the free Adzuna tier allows about 1,000 calls a month, so keep "pages to fetch" modest.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="collectBtn">Collect jobs</button>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="banner" id="errorBanner"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Your profile</h2>
+    <div class="panel">
+      <div class="file-input-wrap">
+        <input type="file" id="profileFile" accept="application/json">
+        <button class="secondary" id="clearProfileBtn">Remove profile</button>
+      </div>
+      <p class="hint">Upload the profile JSON describing your target roles, industries, location, and experience level. Matching happens right here in the browser — the file never leaves this page.</p>
+      <div class="profile-summary" id="profileSummary"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Collected jobs</h2>
+    <div class="results-head">
+      <input id="filterInput" type="text" placeholder="Filter by title, company, or location">
+      <div class="results-tools">
+        <select id="sortSelect">
+          <option value="match">Sort: best match</option>
+          <option value="new">Sort: newest collected</option>
+        </select>
+        <button class="secondary" id="exportBtn">Export as JSON</button>
+        <button class="secondary" id="clearBtn">Clear collected list</button>
+      </div>
+    </div>
+    <div id="resultsList"></div>
+  </section>
+
+  <footer>
+    Data from the Adzuna API (developer.adzuna.com). This page makes requests straight from your browser to Adzuna — nothing passes through any other server.
+  </footer>
+
+</div>
+
+<script>
+  const LS_APP_ID = 'harvester_app_id';
+  const LS_APP_KEY = 'harvester_app_key';
+  const LS_JOBS = 'harvester_jobs';
+  const LS_PROFILE = 'harvester_profile';
+
+  const els = {
+    appId: document.getElementById('appId'),
+    appKey: document.getElementById('appKey'),
+    keywords: document.getElementById('keywords'),
+    location: document.getElementById('location'),
+    country: document.getElementById('country'),
+    maxPages: document.getElementById('maxPages'),
+    collectBtn: document.getElementById('collectBtn'),
+    status: document.getElementById('status'),
+    errorBanner: document.getElementById('errorBanner'),
+    tallyNum: document.getElementById('tallyNum'),
+    filterInput: document.getElementById('filterInput'),
+    sortSelect: document.getElementById('sortSelect'),
+    exportBtn: document.getElementById('exportBtn'),
+    clearBtn: document.getElementById('clearBtn'),
+    resultsList: document.getElementById('resultsList'),
+    profileFile: document.getElementById('profileFile'),
+    clearProfileBtn: document.getElementById('clearProfileBtn'),
+    profileSummary: document.getElementById('profileSummary'),
+  };
+
+  let jobsMap = loadJobs();       // { id: jobObject }
+  let newIdsThisRun = new Set();  // ids added in the most recent collect run
+  let filterText = '';
+  let profile = loadProfile();    // parsed profile JSON, or null
+
+  // ---- persistence helpers ----
+  function loadJobs(){
+    try{
+      const raw = localStorage.getItem(LS_JOBS);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){
+      return {};
+    }
+  }
+  function saveJobs(){
+    localStorage.setItem(LS_JOBS, JSON.stringify(jobsMap));
+  }
+  function loadProfile(){
+    try{
+      const raw = localStorage.getItem(LS_PROFILE);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){
+      return null;
+    }
+  }
+  function saveProfile(){
+    if(profile){
+      localStorage.setItem(LS_PROFILE, JSON.stringify(profile));
+    }else{
+      localStorage.removeItem(LS_PROFILE);
+    }
+  }
+
+  // restore saved credentials/search fields
+  els.appId.value = localStorage.getItem(LS_APP_ID) || '';
+  els.appKey.value = localStorage.getItem(LS_APP_KEY) || '';
+
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+  function normalizeJob(raw){
+    return {
+      id: raw.id,
+      title: (raw.title || '').trim(),
+      company: raw.company && raw.company.display_name ? raw.company.display_name : 'Unknown',
+      location: raw.location && raw.location.display_name ? raw.location.display_name : 'Unknown',
+      category: raw.category && raw.category.label ? raw.category.label : '',
+      salary_min: raw.salary_min || null,
+      salary_max: raw.salary_max || null,
+      url: raw.redirect_url || '#',
+      created: raw.created || null,
+      collected_at: new Date().toISOString(),
+    };
+  }
+
+  function formatSalary(job){
+    if(!job.salary_min && !job.salary_max) return '';
+    const fmt = n => n ? Math.round(n).toLocaleString() : '?';
+    return `$${fmt(job.salary_min)} – $${fmt(job.salary_max)}`;
+  }
+
+  // ---- profile <-> job matching ----
+  // Rule-based scoring, 0-100. Each component is a deliberate, explainable
+  // weight rather than a black box — good for showing your work in class.
+  function scoreJob(job, prof){
+    const text = `${job.title} ${job.company} ${job.category}`.toLowerCase();
+    const reasons = [];
+    let score = 0;
+
+    // Deal-breakers exclude a job outright, before anything else is scored.
+    const dealBreakers = (prof.match_criteria && prof.match_criteria.deal_breaker_keywords) || [];
+    for(const kw of dealBreakers){
+      if(kw && text.includes(kw.toLowerCase())){
+        return { score: 0, reasons: [`Excluded — contains deal-breaker "${kw}"`], excluded: true };
+      }
+    }
+
+    // Target role match (up to 40 pts): exact phrase match beats partial word overlap.
+    const roles = (prof.work_preferences && prof.work_preferences.target_roles) || [];
+    const roleHit = roles.find(r => r && text.includes(r.toLowerCase()));
+    if(roleHit){
+      score += 40;
+      reasons.push(`Target role: ${roleHit}`);
+    }else{
+      const roleWords = [...new Set(roles.join(' ').toLowerCase().split(/\s+/).filter(w => w.length > 3))];
+      const titleWords = (job.title || '').toLowerCase().split(/\s+/);
+      const overlap = roleWords.filter(w => titleWords.includes(w));
+      if(overlap.length){
+        score += 20;
+        reasons.push(`Related to target role (${overlap.join(', ')})`);
+      }
+    }
+
+    // Target industry match (up to 25 pts).
+    const industries = (prof.work_preferences && prof.work_preferences.target_industries) || [];
+    const industryHit = industries.find(i => i && text.includes(i.toLowerCase()));
+    if(industryHit){
+      score += 25;
+      reasons.push(`Target industry: ${industryHit}`);
+    }
+
+    // Experience-level fit (+/-15 pts) via simple seniority keyword lists.
+    const level = ((prof.experience_summary && prof.experience_summary.experience_level) || '').toLowerCase();
+    const seniorWords = ['senior','sr.','lead','director','vp','head of','principal','chief'];
+    const entryWords = ['analyst','junior','graduate','associate','entry','intern'];
+    const titleLower = (job.title || '').toLowerCase();
+    if(level === 'entry'){
+      if(seniorWords.some(w => titleLower.includes(w))){
+        score -= 15;
+        reasons.push('Title reads senior-level');
+      }else if(entryWords.some(w => titleLower.includes(w))){
+        score += 15;
+        reasons.push('Entry-level friendly title');
+      }else{
+        score += 5;
+      }
+    }
+
+    // Location fit (up to 10 pts).
+    const loc = prof.personal_info && prof.personal_info.location;
+    const city = (loc && loc.city || '').toLowerCase();
+    const relocate = !!(prof.personal_info && prof.personal_info.willing_to_relocate);
+    const jobLocLower = (job.location || '').toLowerCase();
+    if(city && jobLocLower.includes(city)){
+      score += 10;
+      reasons.push(`Based in ${loc.city}`);
+    }else if(relocate){
+      score += 5;
+      reasons.push('Open to relocation');
+    }
+
+    // Nice-to-have keywords (up to 10 pts).
+    const niceKeywords = (prof.match_criteria && prof.match_criteria.nice_to_have_keywords) || [];
+    const niceHits = niceKeywords.filter(kw => kw && text.includes(kw.toLowerCase())).length;
+    if(niceHits){
+      score += Math.min(10, niceHits * 3);
+      reasons.push(`${niceHits} nice-to-have keyword${niceHits === 1 ? '' : 's'}`);
+    }
+
+    // Must-have keywords: if the profile lists any and none appear, cap the score.
+    const mustKeywords = (prof.match_criteria && prof.match_criteria.must_have_keywords) || [];
+    if(mustKeywords.length && !mustKeywords.some(kw => kw && text.includes(kw.toLowerCase()))){
+      score = Math.min(score, 20);
+      reasons.push('Missing all must-have keywords');
+    }
+
+    score = Math.max(0, Math.min(100, Math.round(score)));
+    if(reasons.length === 0) reasons.push('No strong signals — matched on general fields only');
+    return { score, reasons, excluded: false };
+  }
+
+  function renderProfileSummary(){
+    if(!profile){
+      els.profileSummary.innerHTML = '<p class="hint">No profile loaded — collected jobs sort by newest.</p>';
+      return;
+    }
+    const name = (profile.personal_info && profile.personal_info.full_name) || 'Unnamed profile';
+    const roles = (profile.work_preferences && profile.work_preferences.target_roles) || [];
+    const industries = (profile.work_preferences && profile.work_preferences.target_industries) || [];
+    const level = (profile.experience_summary && profile.experience_summary.experience_level) || '';
+    const loc = profile.personal_info && profile.personal_info.location;
+    const locStr = loc ? [loc.city, loc.country].filter(Boolean).join(', ') : '';
+
+    els.profileSummary.innerHTML = `
+      <p><strong>${escapeHtml(name)}</strong>${locStr ? ' · ' + escapeHtml(locStr) : ''}${level ? ' · ' + escapeHtml(level) + '-level' : ''}</p>
+      <div class="chip-list">
+        ${roles.map(r => `<span class="chip">${escapeHtml(r)}</span>`).join('')}
+        ${industries.map(i => `<span class="chip">${escapeHtml(i)}</span>`).join('')}
+      </div>
+    `;
+  }
+
+  async function collectJobs(){
+    const appId = els.appId.value.trim();
+    const appKey = els.appKey.value.trim();
+    const keywords = els.keywords.value.trim();
+    const location = els.location.value.trim();
+    const country = els.country.value;
+    const maxPages = Math.max(1, Math.min(10, parseInt(els.maxPages.value, 10) || 1));
+
+    els.errorBanner.classList.remove('show');
+    els.errorBanner.textContent = '';
+
+    if(!appId || !appKey){
+      showError('App ID and App Key are required — get a free pair at developer.adzuna.com.');
+      return;
+    }
+
+    localStorage.setItem(LS_APP_ID, appId);
+    localStorage.setItem(LS_APP_KEY, appKey);
+
+    els.collectBtn.disabled = true;
+    newIdsThisRun = new Set();
+    let newCount = 0;
+
+    try{
+      for(let page = 1; page <= maxPages; page++){
+        setStatus(`Fetching page ${page} of ${maxPages}…`);
+
+        const params = new URLSearchParams({
+          app_id: appId,
+          app_key: appKey,
+          what: keywords,
+          where: location,
+          results_per_page: '50',
+          'content-type': 'application/json',
+        });
+        const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/${page}?${params.toString()}`;
+
+        const res = await fetch(url);
+        if(!res.ok){
+          const text = await res.text();
+          throw new Error(`Adzuna returned HTTP ${res.status} — check your App ID and App Key. (${text.slice(0,120)})`);
+        }
+        const data = await res.json();
+        const results = data.results || [];
+        if(results.length === 0){
+          setStatus(`Page ${page}: no more results — stopping early.`);
+          break;
+        }
+
+        for(const raw of results){
+          const job = normalizeJob(raw);
+          if(job.id && !jobsMap[job.id]){
+            jobsMap[job.id] = job;
+            newIdsThisRun.add(job.id);
+            newCount++;
+          }
+        }
+        saveJobs();
+        renderList();
+        updateTally();
+
+        if(page < maxPages) await sleep(300); // be gentle on the rate limit
+      }
+
+      setStatus(`Done — ${newCount} new job${newCount === 1 ? '' : 's'} added.`);
+    }catch(err){
+      showError(err.message);
+      setStatus('Stopped due to an error.', true);
+    }finally{
+      els.collectBtn.disabled = false;
+    }
+  }
+
+  function setStatus(msg, isError){
+    els.status.textContent = msg;
+    els.status.classList.toggle('error', !!isError);
+  }
+  function showError(msg){
+    els.errorBanner.textContent = msg;
+    els.errorBanner.classList.add('show');
+  }
+
+  function updateTally(){
+    els.tallyNum.textContent = Object.keys(jobsMap).length;
+  }
+
+  function renderList(){
+    const sortMode = els.sortSelect ? els.sortSelect.value : 'new';
+
+    let jobs = Object.values(jobsMap).filter(j => {
+      if(!filterText) return true;
+      const hay = `${j.title} ${j.company} ${j.location}`.toLowerCase();
+      return hay.includes(filterText);
+    });
+
+    if(profile){
+      jobs = jobs.map(j => Object.assign({}, j, { _match: scoreJob(j, profile) }));
+    }
+
+    if(profile && sortMode === 'match'){
+      jobs.sort((a,b) => {
+        if(a._match.excluded !== b._match.excluded) return a._match.excluded ? 1 : -1;
+        return b._match.score - a._match.score;
+      });
+    }else{
+      jobs.sort((a,b) => (b.created || '').localeCompare(a.created || ''));
+    }
+
+    if(jobs.length === 0){
+      els.resultsList.innerHTML = '<p class="empty">No jobs collected yet. Fill in the search parameters above and click "Collect jobs".</p>';
+      return;
+    }
+
+    els.resultsList.innerHTML = jobs.map(job => {
+      const isNew = newIdsThisRun.has(job.id);
+      const salary = formatSalary(job);
+      const match = job._match;
+
+      let badgeHtml = isNew ? '<span class="tag">new</span>' : '';
+      let reasonsHtml = '';
+      let excludedClass = '';
+
+      if(match){
+        excludedClass = match.excluded ? 'excluded' : '';
+        const tier = match.score >= 65 ? '' : (match.score >= 35 ? 'mid' : 'low');
+        badgeHtml = `<span class="score-badge ${tier}">${match.excluded ? 'skip' : match.score + ' match'}</span>`;
+        reasonsHtml = `<p class="reasons">${match.reasons.map(escapeHtml).join(' · ')}</p>`;
+      }
+
+      return `
+        <div class="row ${isNew ? 'new' : ''} ${excludedClass}">
+          <div class="row-main">
+            <p class="row-title"><a href="${job.url}" target="_blank" rel="noopener">${escapeHtml(job.title)}</a></p>
+            <p class="row-meta">${escapeHtml(job.company)} · ${escapeHtml(job.location)}${job.category ? ' · ' + escapeHtml(job.category) : ''}${salary ? ' · ' + salary : ''}</p>
+            ${reasonsHtml}
+          </div>
+          ${badgeHtml}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function exportJobs(){
+    const blob = new Blob([JSON.stringify(Object.values(jobsMap), null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'collected_jobs.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function clearJobs(){
+    if(!confirm('Remove all collected jobs from this browser? This cannot be undone.')) return;
+    jobsMap = {};
+    newIdsThisRun = new Set();
+    saveJobs();
+    renderList();
+    updateTally();
+    setStatus('Collected list cleared.');
+  }
+
+  els.collectBtn.addEventListener('click', collectJobs);
+  els.exportBtn.addEventListener('click', exportJobs);
+  els.clearBtn.addEventListener('click', clearJobs);
+  els.filterInput.addEventListener('input', e => {
+    filterText = e.target.value.trim().toLowerCase();
+    renderList();
+  });
+  els.sortSelect.addEventListener('change', renderList);
+
+  els.profileFile.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try{
+        profile = JSON.parse(evt.target.result);
+        saveProfile();
+        renderProfileSummary();
+        renderList();
+        setStatus('Profile loaded — collected jobs ranked by match.');
+      }catch(err){
+        showError("That file isn't valid JSON — check the export and try again.");
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  els.clearProfileBtn.addEventListener('click', () => {
+    profile = null;
+    saveProfile();
+    renderProfileSummary();
+    renderList();
+  });
+
+  renderProfileSummary();
+  updateTally();
+  renderList();
+</script>
+</body>
+</html>

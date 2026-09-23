@@ -1,0 +1,152 @@
+{
+  "profile_id": "christina_moller_hjortholm",
+  "personal_info": {
+    "full_name": "Christina Møller Hjortholm",
+    "email": "christina.hjortholm@gmail.com",
+    "phone": "",
+    "location": {
+      "city": "Copenhagen",
+      "region": "Capital Region",
+      "country": "Denmark"
+    },
+    "linkedin_url": "https://www.linkedin.com/in/christinamøller-hjortholm",
+    "portfolio_url": "",
+    "willing_to_relocate": true
+  },
+  "work_preferences": {
+    "remote_type": "Open to any",
+    "employment_type": [],
+    "target_roles": ["M&A Analyst", "Strategy Analyst", "Corporate Finance Analyst", "Investor Relations Analyst"],
+    "target_industries": ["M&A", "Corporate Finance", "Strategy Consulting", "Banking"],
+    "min_salary": null,
+    "max_salary": null,
+    "salary_currency": "",
+    "salary_period": "",
+    "preferred_countries": [],
+    "excluded_countries": [],
+    "visa_sponsorship_needed": null,
+    "notice_period_days": null,
+    "availability_date": ""
+  },
+  "experience_summary": {
+    "current_title": "Student Assistant in Group Strategy, M&A and Investor Relations",
+    "experience_level": "Entry",
+    "total_years_experience": null,
+    "years_in_current_field": null
+  },
+  "work_history": [
+    {
+      "job_title": "Student Assistant in Group Strategy, M&A and Investor Relations",
+      "company_name": "MT Højgaard Holding",
+      "location": "Copenhagen",
+      "remote_type": "",
+      "start_date": "2025-03",
+      "end_date": "2026-06",
+      "is_current": false,
+      "description": "",
+      "achievements": [],
+      "skills_used": []
+    },
+    {
+      "job_title": "Corporate Coverage Intern",
+      "company_name": "BNP Paribas",
+      "location": "Copenhagen",
+      "remote_type": "",
+      "start_date": "2024-09",
+      "end_date": "2024-12",
+      "is_current": false,
+      "description": "",
+      "achievements": [],
+      "skills_used": []
+    },
+    {
+      "job_title": "Student Assistant in Business Development",
+      "company_name": "New Power Partners",
+      "location": "Copenhagen, Capital Region",
+      "remote_type": "",
+      "start_date": "2022-06",
+      "end_date": "2024-08",
+      "is_current": false,
+      "description": "",
+      "achievements": [],
+      "skills_used": []
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master in Management",
+      "field_of_study": "CEMS MiM",
+      "institution": "CEMS - The Global Alliance in Management Education",
+      "location": "",
+      "start_date": "2026",
+      "end_date": "2027",
+      "is_current": true
+    },
+    {
+      "degree": "MSc",
+      "field_of_study": "Applied Economics and Finance",
+      "institution": "Copenhagen Business School",
+      "location": "Copenhagen",
+      "start_date": "2025",
+      "end_date": "2027",
+      "is_current": true
+    },
+    {
+      "degree": "BSc",
+      "field_of_study": "International Business and Politics",
+      "institution": "Copenhagen Business School",
+      "location": "Copenhagen",
+      "start_date": "2021",
+      "end_date": "2024",
+      "is_current": false
+    },
+    {
+      "degree": "Exchange Semester",
+      "field_of_study": "",
+      "institution": "QUT (Queensland University of Technology)",
+      "location": "",
+      "start_date": "2023-07",
+      "end_date": "2023-11",
+      "is_current": false
+    },
+    {
+      "degree": "International Baccalaureate",
+      "field_of_study": "",
+      "institution": "",
+      "location": "",
+      "start_date": "2019-08",
+      "end_date": "2021-05",
+      "is_current": false
+    }
+  ],
+  "skills": {
+    "technical_skills": [],
+    "soft_skills": [],
+    "tools_platforms": [],
+    "skill_proficiency": []
+  },
+  "certifications": [
+    {
+      "name": "Financial Modeling & Valuation Analyst (FMVA)",
+      "issuing_organization": "M&A Academy",
+      "date_earned": "",
+      "expiry_date": "",
+      "credential_id": ""
+    }
+  ],
+  "languages": [],
+  "job_search_status": {
+    "status": "",
+    "applications_submitted": null,
+    "last_updated": ""
+  },
+  "documents": {
+    "resume_url": "",
+    "cover_letter_template_url": ""
+  },
+  "match_criteria": {
+    "must_have_keywords": [],
+    "nice_to_have_keywords": [],
+    "deal_breaker_keywords": []
+  }
+}

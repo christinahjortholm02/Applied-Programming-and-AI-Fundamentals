@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "My Momentum",
+  "version": "1.0",
+  "description": "A calm new tab page with a clock, a daily focus and a background photo.",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  }
+}

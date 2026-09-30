@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Tab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- FEATURE 3: the background photo is painted onto this element by script.js -->
+  <div id="background"></div>
+
+  <main>
+    <!-- FEATURE 1: clock + greeting. Empty for now; script.js fills in the text -->
+    <h1 id="clock"></h1>
+    <p id="greeting"></p>
+
+    <!-- FEATURE 2: daily focus. Two "modes": asking, and showing -->
+    <section id="focus">
+      <!-- Mode A: shown when no focus is saved yet -->
+      <div id="focus-ask">
+        <label for="focus-input">What is your main focus today?</label>
+        <input id="focus-input" type="text" autocomplete="off" maxlength="80">
+      </div>
+
+      <!-- Mode B: shown when a focus is saved -->
+      <div id="focus-show" hidden>
+        <p class="focus-label">Today</p>
+        <p id="focus-text"></p>
+        <button id="focus-clear" type="button">Change focus</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- The script goes last so all the elements above already exist when it runs -->
+  <script src="script.js"></script>
+</body>
+</html>

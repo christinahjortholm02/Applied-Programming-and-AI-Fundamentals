@@ -1,0 +1,140 @@
+/* ---------- Basics ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  color: #ffffff;
+  background-color: #2f3b3a; /* shown if the photo fails to load (e.g. offline) */
+  overflow: hidden;
+}
+
+/* ---------- Feature 3: background photo ---------- */
+#background {
+  position: fixed;          /* stays put and covers the whole window */
+  inset: 0;                 /* top, right, bottom, left all = 0 */
+  background-size: cover;   /* stretch the photo to fill, without distorting it */
+  background-position: center;
+  z-index: -1;              /* sit BEHIND everything else */
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+/* script.js adds the class "loaded" once the photo is ready, so it fades in */
+#background.loaded {
+  opacity: 1;
+}
+
+/* a soft dark layer on top of the photo so white text is always readable */
+#background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.5));
+}
+
+/* ---------- Layout ---------- */
+main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* center horizontally */
+  justify-content: center;  /* center vertically */
+  text-align: center;
+  padding: 2rem;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Feature 1: clock + greeting ---------- */
+#clock {
+  font-size: clamp(5rem, 16vw, 11rem); /* grows with the window, within limits */
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;  /* digits all the same width, so it doesn't wiggle */
+}
+
+#greeting {
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  font-weight: 500;
+  margin-top: 0.75rem;
+}
+
+/* ---------- Feature 2: daily focus ---------- */
+#focus {
+  margin-top: 4rem;
+  width: min(36rem, 100%);
+}
+
+#focus-ask label {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+#focus-input {
+  width: 100%;
+  font: inherit;
+  font-size: 1.5rem;
+  color: #ffffff;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+  padding: 0.25rem 0;
+  outline: none;
+}
+
+#focus-input:focus {
+  border-bottom-color: #ffffff;
+}
+
+.focus-label {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+#focus-text {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+#focus-clear {
+  margin-top: 1rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  opacity: 0;               /* hidden until you hover the focus area */
+  transition: opacity 0.2s ease;
+}
+
+#focus-show:hover #focus-clear,
+#focus-clear:focus-visible {
+  opacity: 1;
+}
+
+#focus-clear:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* respect people who turn off animations in their system settings */
+@media (prefers-reduced-motion: reduce) {
+  #background,
+  #focus-clear {
+    transition: none;
+  }
+}
